@@ -20,13 +20,23 @@
     <!-- Scrambled Letters -->
     <div id="scrambledLetters" class="letters-container"></div>
 
-    <!-- Answer Input -->
-    <input
-      type="text"
-      id="answerInput"
-      class="answer-input"
-      placeholder="Type your answer..."
-    />
+    <!-- Answer Input Form -->
+    <form id="answerForm" class="answer-form">
+      <input
+        type="text"
+        id="answerInput"
+        class="answer-input"
+        placeholder="Type your answer..."
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+        data-lpignore="true"
+        inputmode="text"
+        enterkeyhint="done"
+      />
+    </form>
+
 
     <!-- Timer Display -->
     <div id="timer" class="timer"></div>

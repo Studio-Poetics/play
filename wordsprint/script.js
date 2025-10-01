@@ -448,11 +448,26 @@ retryBtn.addEventListener("click", startGame);
 submitBtn.addEventListener("click", checkAnswer);
 soundToggle.addEventListener("click", toggleSound);
 
-// Check guess on Enter
+// Check guess on Enter (multiple event types for better mobile support)
 answerInput.addEventListener("keyup", function (e) {
   if (e.key === "Enter") {
+    e.preventDefault();
     checkAnswer();
   }
+});
+
+// Also handle keydown for immediate response
+answerInput.addEventListener("keydown", function (e) {
+  if (e.key === "Enter") {
+    e.preventDefault(); // Prevent default behavior
+  }
+});
+
+// Handle form submission (triggered by 'Go' button on mobile)
+const answerForm = document.getElementById("answerForm");
+answerForm.addEventListener("submit", function (e) {
+  e.preventDefault();
+  checkAnswer();
 });
 
 // Touch and mobile support
@@ -461,15 +476,48 @@ answerInput.addEventListener("input", function() {
   this.value = this.value.toUpperCase();
 });
 
-// Mobile keyboard handling
+// Mobile keyboard optimization
+function setupMobileKeyboard() {
+  const isMobile = window.innerWidth <= 480;
+
+  if (isMobile) {
+    // Optimize system keyboard for smaller size
+    setupSystemKeyboardOptimizations();
+  }
+}
+
+// Optimize system keyboard to be smaller
+function setupSystemKeyboardOptimizations() {
+  // Force compact keyboard layout
+  answerInput.addEventListener('focus', function() {
+    // Set input attributes that request smaller keyboard with submit action
+    this.setAttribute('enterkeyhint', 'done');
+    this.setAttribute('inputmode', 'text');
+
+    // Prevent zoom by temporarily setting font size
+    this.style.fontSize = '16px';
+
+    setTimeout(() => {
+      // Restore original font size after keyboard appears
+      this.style.fontSize = '';
+    }, 300);
+  });
+
+  // Additional mobile keyboard event handling
+  answerInput.addEventListener('blur', function() {
+    // Clean up when keyboard disappears
+    this.style.fontSize = '';
+  });
+}
+
+// Mobile keyboard handling (fallback for system keyboard)
 function handleMobileKeyboard() {
   const isMobile = window.innerWidth <= 480;
 
   if (isMobile) {
-    // When input is focused, ensure submit button remains visible
+    // Mobile keyboard scroll handling
     answerInput.addEventListener('focus', function() {
       setTimeout(() => {
-        // Scroll to ensure submit button is visible
         const submitBtn = document.getElementById('submitBtn');
         if (submitBtn && !submitBtn.classList.contains('hidden')) {
           submitBtn.scrollIntoView({
@@ -478,30 +526,21 @@ function handleMobileKeyboard() {
             inline: 'nearest'
           });
         }
-      }, 300); // Delay to allow keyboard animation
-    });
-
-    // Prevent viewport zoom on input focus
-    answerInput.addEventListener('touchstart', function() {
-      if (window.devicePixelRatio && window.devicePixelRatio > 1) {
-        const viewport = document.querySelector('meta[name="viewport"]');
-        if (viewport) {
-          viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
-        }
-      }
-    });
-
-    answerInput.addEventListener('blur', function() {
-      const viewport = document.querySelector('meta[name="viewport"]');
-      if (viewport) {
-        viewport.setAttribute('content', 'width=device-width, initial-scale=1.0');
-      }
+      }, 300);
     });
   }
 }
 
+// Initialize mobile keyboard
+setupMobileKeyboard();
+
 // Initialize mobile keyboard handling
 handleMobileKeyboard();
+
+// Handle window resize to update mobile keyboard
+window.addEventListener('resize', function() {
+  setupMobileKeyboard();
+});
 
 // Prevent zoom on double-tap for mobile
 let lastTouchEnd = 0;
