@@ -283,7 +283,20 @@ function failRound(reason) {
 
   playWrongSound();
 
-  correctAnswerDiv.textContent = `Correct word was: ${currentWord}`;
+  // Find all valid anagrams and display them
+  const allAnagrams = findAllValidAnagrams(currentWord);
+  let answerText = `One correct word was: ${currentWord}`;
+
+  if (allAnagrams.length > 0) {
+    // Limit to first 4 alternatives to avoid overwhelming display
+    const limitedAnagrams = allAnagrams.slice(0, 4);
+    answerText += ` | Others: ${limitedAnagrams.join(", ")}`;
+    if (allAnagrams.length > 4) {
+      answerText += ` (+${allAnagrams.length - 4} more)`;
+    }
+  }
+
+  correctAnswerDiv.textContent = answerText;
   correctAnswerDiv.classList.remove("hidden");
 
   streak = 0;
@@ -348,7 +361,28 @@ function checkAnswer() {
       baseTime = 10; // reduce base time after 10 correct words
     }
 
-    nextRound();
+    // Show alternative anagrams briefly for educational value
+    const allAnagrams = findAllValidAnagrams(currentWord);
+    const otherAnagrams = allAnagrams.filter(word => word !== userGuess);
+
+    if (otherAnagrams.length > 0) {
+      const limitedAnagrams = otherAnagrams.slice(0, 3);
+      let successText = `Correct! Other valid words: ${limitedAnagrams.join(", ")}`;
+      if (otherAnagrams.length > 3) {
+        successText += ` (+${otherAnagrams.length - 3} more)`;
+      }
+      correctAnswerDiv.textContent = successText;
+      correctAnswerDiv.classList.remove("hidden");
+
+      // Hide the message and move to next round after a brief delay
+      setTimeout(() => {
+        correctAnswerDiv.classList.add("hidden");
+        nextRound();
+      }, 1500);
+    } else {
+      // No alternatives found, proceed immediately
+      nextRound();
+    }
   } else {
     // Incorrect => show correct, then next
     failRound("Incorrect guess");
@@ -364,6 +398,27 @@ function isValidAnagram(guess, target) {
   const sortA = guess.split("").sort().join("");
   const sortB = target.split("").sort().join("");
   return sortA === sortB;
+}
+
+/**
+ * Find all valid anagrams of a word that exist in the dictionary
+ * Returns array of valid anagram words (excluding the original word)
+ */
+function findAllValidAnagrams(word) {
+  const targetSorted = word.split("").sort().join("");
+  const validAnagrams = [];
+
+  // Search through dictionary for words with same letters
+  for (const dictWord of dictionarySet) {
+    if (dictWord !== word && dictWord.length === word.length) {
+      const dictSorted = dictWord.split("").sort().join("");
+      if (dictSorted === targetSorted) {
+        validAnagrams.push(dictWord);
+      }
+    }
+  }
+
+  return validAnagrams;
 }
 
 /**
@@ -404,6 +459,105 @@ answerInput.addEventListener("keyup", function (e) {
 answerInput.addEventListener("input", function() {
   // Auto-uppercase on mobile
   this.value = this.value.toUpperCase();
+});
+
+// Custom keyboard functionality
+let useCustomKeyboard = false; // Toggle this for custom vs system keyboard
+
+function setupCustomKeyboard() {
+  const customKeyboard = document.getElementById('customKeyboard');
+  const isMobile = window.innerWidth <= 480;
+
+  if (isMobile && useCustomKeyboard) {
+    // Make input readonly to prevent system keyboard
+    answerInput.setAttribute('readonly', true);
+
+    // Show custom keyboard
+    customKeyboard.classList.remove('hidden');
+
+    // Handle custom keyboard clicks
+    customKeyboard.addEventListener('click', function(e) {
+      if (e.target.classList.contains('key-btn')) {
+        const key = e.target.getAttribute('data-key');
+
+        if (key === '⌫') {
+          // Delete last character
+          answerInput.value = answerInput.value.slice(0, -1);
+        } else {
+          // Add character
+          answerInput.value += key;
+        }
+
+        // Trigger input event for existing functionality
+        answerInput.dispatchEvent(new Event('input'));
+      }
+    });
+
+    // Handle touch events for better mobile experience
+    customKeyboard.addEventListener('touchstart', function(e) {
+      e.preventDefault(); // Prevent scrolling
+    });
+
+  } else {
+    // Use system keyboard with optimizations
+    answerInput.removeAttribute('readonly');
+    customKeyboard.classList.add('hidden');
+
+    if (isMobile) {
+      // Optimize system keyboard for smaller size
+      setupSystemKeyboardOptimizations();
+    }
+  }
+}
+
+// Optimize system keyboard to be smaller
+function setupSystemKeyboardOptimizations() {
+  // Force compact keyboard layout
+  answerInput.addEventListener('focus', function() {
+    // Set input attributes that request smaller keyboard
+    this.setAttribute('enterkeyhint', 'done');
+    this.setAttribute('inputmode', 'text');
+
+    // Prevent zoom by temporarily setting font size
+    this.style.fontSize = '16px';
+
+    setTimeout(() => {
+      // Restore original font size after keyboard appears
+      this.style.fontSize = '';
+    }, 300);
+  });
+}
+
+// Mobile keyboard handling (fallback for system keyboard)
+function handleMobileKeyboard() {
+  const isMobile = window.innerWidth <= 480;
+
+  if (isMobile && !answerInput.hasAttribute('readonly')) {
+    // Only run if not using custom keyboard
+    answerInput.addEventListener('focus', function() {
+      setTimeout(() => {
+        const submitBtn = document.getElementById('submitBtn');
+        if (submitBtn && !submitBtn.classList.contains('hidden')) {
+          submitBtn.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest',
+            inline: 'nearest'
+          });
+        }
+      }, 300);
+    });
+  }
+}
+
+// Initialize custom keyboard
+setupCustomKeyboard();
+
+// Initialize mobile keyboard handling
+handleMobileKeyboard();
+
+// Handle window resize to switch keyboard types
+window.addEventListener('resize', function() {
+  setupCustomKeyboard();
 });
 
 // Prevent zoom on double-tap for mobile

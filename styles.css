@@ -17,8 +17,10 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  min-height: 100dvh; /* Dynamic viewport height for better mobile support */
   font-weight: 400;
   line-height: 1.4;
+  position: relative;
 }
 
 /* 3. Container for the Game Elements - Mobile Friendly Width */
@@ -337,6 +339,63 @@ body {
   border-radius: 50%;
 }
 
+/* Custom Mini Keyboard for Mobile */
+.custom-keyboard {
+  margin-top: 1rem;
+  padding: 0.8rem;
+  background: #e8e8e8;
+  border-radius: 16px;
+  box-shadow:
+    inset 4px 4px 8px rgba(163, 163, 163, 0.2),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.7);
+}
+
+.keyboard-row {
+  display: flex;
+  justify-content: center;
+  gap: 0.3rem;
+  margin-bottom: 0.3rem;
+}
+
+.keyboard-row:last-child {
+  margin-bottom: 0;
+}
+
+.key-btn {
+  background: #e8e8e8;
+  border: none;
+  border-radius: 8px;
+  width: 32px;
+  height: 36px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2c2c2c;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  box-shadow:
+    2px 2px 4px rgba(163, 163, 163, 0.3),
+    -2px -2px 4px rgba(255, 255, 255, 0.8);
+}
+
+.key-btn:active {
+  box-shadow:
+    inset 2px 2px 4px rgba(163, 163, 163, 0.3),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.7);
+  transform: scale(0.95);
+}
+
+.delete-btn {
+  background: #ff6b35;
+  color: white;
+  width: 40px;
+}
+
+.delete-btn:active {
+  box-shadow:
+    inset 2px 2px 4px rgba(255, 107, 53, 0.3),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.7);
+}
+
 /* Hide Elements */
 .hidden {
   display: none;
@@ -357,6 +416,9 @@ footer {
 @media screen and (max-width: 480px) {
   body {
     padding: 1rem;
+    justify-content: flex-start;
+    min-height: 100vh;
+    min-height: 100dvh;
   }
 
   .game-container {
@@ -365,6 +427,33 @@ footer {
     padding: 2rem 1.5rem;
     border-radius: 20px;
     margin: 0;
+    position: relative;
+    min-height: calc(100dvh - 2rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  /* Ensure submit button stays accessible when keyboard is open */
+  .submit-btn {
+    position: fixed;
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    width: calc(100% - 2rem);
+    max-width: 360px;
+    background: #e8e8e8;
+    border-radius: 16px;
+    box-shadow:
+      6px 6px 12px rgba(163, 163, 163, 0.3),
+      -6px -6px 12px rgba(255, 255, 255, 0.8),
+      0 0 20px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Add padding to game container to account for fixed submit button */
+  .game-container {
+    padding-bottom: 5rem;
   }
 
   .sound-toggle {
@@ -400,7 +489,23 @@ footer {
     font-size: 1rem;
     padding: 1rem;
     border-radius: 12px;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  /* Show custom keyboard on mobile */
+  .custom-keyboard {
+    display: block;
+  }
+
+  /* Make custom keyboard more compact on mobile */
+  .key-btn {
+    width: 28px;
+    height: 32px;
+    font-size: 0.8rem;
+  }
+
+  .delete-btn {
+    width: 36px;
   }
 
   .timer {
@@ -454,6 +559,7 @@ footer {
 @media screen and (max-width: 360px) {
   .game-container {
     padding: 1.5rem 1rem;
+    min-height: calc(100dvh - 1rem);
   }
 
   .letters-container {
@@ -470,5 +576,36 @@ footer {
   .button {
     min-width: 120px;
     padding: 0.9rem 1.5rem;
+  }
+
+  .submit-btn {
+    position: fixed;
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 2rem);
+    max-width: 320px;
+  }
+}
+
+/* Landscape mobile devices */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  body {
+    justify-content: flex-start;
+    padding: 0.5rem;
+  }
+
+  .game-container {
+    padding: 1rem;
+    margin: 0;
+  }
+
+  .submit-btn {
+    position: fixed;
+    bottom: 0.5rem;
+    right: 0.5rem;
+    width: auto;
+    transform: none;
+    left: auto;
   }
 }
