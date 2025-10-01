@@ -17,8 +17,10 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  min-height: 100dvh; /* Dynamic viewport height for better mobile support */
   font-weight: 400;
   line-height: 1.4;
+  position: relative;
 }
 
 /* 3. Container for the Game Elements - Mobile Friendly Width */
@@ -357,6 +359,9 @@ footer {
 @media screen and (max-width: 480px) {
   body {
     padding: 1rem;
+    justify-content: flex-start;
+    min-height: 100vh;
+    min-height: 100dvh;
   }
 
   .game-container {
@@ -365,6 +370,24 @@ footer {
     padding: 2rem 1.5rem;
     border-radius: 20px;
     margin: 0;
+    position: relative;
+    min-height: calc(100dvh - 2rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  /* Ensure submit button stays accessible when keyboard is open */
+  .submit-btn {
+    position: sticky;
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    z-index: 100;
+    margin-top: auto;
+    background: #e8e8e8;
+    border-radius: 16px;
+    box-shadow:
+      6px 6px 12px rgba(163, 163, 163, 0.3),
+      -6px -6px 12px rgba(255, 255, 255, 0.8);
   }
 
   .sound-toggle {
@@ -454,6 +477,7 @@ footer {
 @media screen and (max-width: 360px) {
   .game-container {
     padding: 1.5rem 1rem;
+    min-height: calc(100dvh - 1rem);
   }
 
   .letters-container {
@@ -470,5 +494,36 @@ footer {
   .button {
     min-width: 120px;
     padding: 0.9rem 1.5rem;
+  }
+
+  .submit-btn {
+    position: fixed;
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 2rem);
+    max-width: 320px;
+  }
+}
+
+/* Landscape mobile devices */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  body {
+    justify-content: flex-start;
+    padding: 0.5rem;
+  }
+
+  .game-container {
+    padding: 1rem;
+    margin: 0;
+  }
+
+  .submit-btn {
+    position: fixed;
+    bottom: 0.5rem;
+    right: 0.5rem;
+    width: auto;
+    transform: none;
+    left: auto;
   }
 }

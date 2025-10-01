@@ -251,6 +251,11 @@ function startGame() {
  * Timer countdown
  */
 function countdown() {
+  // Guard against multiple timers or inactive game
+  if (!isGameActive || timer === null) {
+    return;
+  }
+
   timeRemaining--;
   timerDisplay.textContent = `Time: ${timeRemaining}`;
 
@@ -268,12 +273,30 @@ function countdown() {
  * Show correct answer, reset streak, move to next word
  */
 function failRound(reason) {
+  // Prevent multiple calls to failRound
+  if (!isGameActive || timer === null) {
+    return;
+  }
+
   clearInterval(timer);
   timer = null;
 
   playWrongSound();
 
-  correctAnswerDiv.textContent = `Correct word was: ${currentWord}`;
+  // Find all valid anagrams and display them
+  const allAnagrams = findAllValidAnagrams(currentWord);
+  let answerText = `One correct word was: ${currentWord}`;
+
+  if (allAnagrams.length > 0) {
+    // Limit to first 4 alternatives to avoid overwhelming display
+    const limitedAnagrams = allAnagrams.slice(0, 4);
+    answerText += ` | Others: ${limitedAnagrams.join(", ")}`;
+    if (allAnagrams.length > 4) {
+      answerText += ` (+${allAnagrams.length - 4} more)`;
+    }
+  }
+
+  correctAnswerDiv.textContent = answerText;
   correctAnswerDiv.classList.remove("hidden");
 
   streak = 0;
@@ -281,7 +304,9 @@ function failRound(reason) {
 
   // After short delay, continue
   setTimeout(() => {
-    nextRound();
+    if (isGameActive) {
+      nextRound();
+    }
   }, 2000);
 }
 
@@ -289,6 +314,12 @@ function failRound(reason) {
  * Move to the next round (pick new puzzle word, reset time, etc.)
  */
 function nextRound() {
+  // Clear any existing timer first to prevent multiple intervals
+  if (timer) {
+    clearInterval(timer);
+    timer = null;
+  }
+
   correctAnswerDiv.classList.add("hidden");
   pickNewWord();
   displayScrambledWord();
@@ -330,7 +361,28 @@ function checkAnswer() {
       baseTime = 10; // reduce base time after 10 correct words
     }
 
-    nextRound();
+    // Show alternative anagrams briefly for educational value
+    const allAnagrams = findAllValidAnagrams(currentWord);
+    const otherAnagrams = allAnagrams.filter(word => word !== userGuess);
+
+    if (otherAnagrams.length > 0) {
+      const limitedAnagrams = otherAnagrams.slice(0, 3);
+      let successText = `Correct! Other valid words: ${limitedAnagrams.join(", ")}`;
+      if (otherAnagrams.length > 3) {
+        successText += ` (+${otherAnagrams.length - 3} more)`;
+      }
+      correctAnswerDiv.textContent = successText;
+      correctAnswerDiv.classList.remove("hidden");
+
+      // Hide the message and move to next round after a brief delay
+      setTimeout(() => {
+        correctAnswerDiv.classList.add("hidden");
+        nextRound();
+      }, 1500);
+    } else {
+      // No alternatives found, proceed immediately
+      nextRound();
+    }
   } else {
     // Incorrect => show correct, then next
     failRound("Incorrect guess");
@@ -346,6 +398,27 @@ function isValidAnagram(guess, target) {
   const sortA = guess.split("").sort().join("");
   const sortB = target.split("").sort().join("");
   return sortA === sortB;
+}
+
+/**
+ * Find all valid anagrams of a word that exist in the dictionary
+ * Returns array of valid anagram words (excluding the original word)
+ */
+function findAllValidAnagrams(word) {
+  const targetSorted = word.split("").sort().join("");
+  const validAnagrams = [];
+
+  // Search through dictionary for words with same letters
+  for (const dictWord of dictionarySet) {
+    if (dictWord !== word && dictWord.length === word.length) {
+      const dictSorted = dictWord.split("").sort().join("");
+      if (dictSorted === targetSorted) {
+        validAnagrams.push(dictWord);
+      }
+    }
+  }
+
+  return validAnagrams;
 }
 
 /**
@@ -387,6 +460,48 @@ answerInput.addEventListener("input", function() {
   // Auto-uppercase on mobile
   this.value = this.value.toUpperCase();
 });
+
+// Mobile keyboard handling
+function handleMobileKeyboard() {
+  const isMobile = window.innerWidth <= 480;
+
+  if (isMobile) {
+    // When input is focused, ensure submit button remains visible
+    answerInput.addEventListener('focus', function() {
+      setTimeout(() => {
+        // Scroll to ensure submit button is visible
+        const submitBtn = document.getElementById('submitBtn');
+        if (submitBtn && !submitBtn.classList.contains('hidden')) {
+          submitBtn.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest',
+            inline: 'nearest'
+          });
+        }
+      }, 300); // Delay to allow keyboard animation
+    });
+
+    // Prevent viewport zoom on input focus
+    answerInput.addEventListener('touchstart', function() {
+      if (window.devicePixelRatio && window.devicePixelRatio > 1) {
+        const viewport = document.querySelector('meta[name="viewport"]');
+        if (viewport) {
+          viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+        }
+      }
+    });
+
+    answerInput.addEventListener('blur', function() {
+      const viewport = document.querySelector('meta[name="viewport"]');
+      if (viewport) {
+        viewport.setAttribute('content', 'width=device-width, initial-scale=1.0');
+      }
+    });
+  }
+}
+
+// Initialize mobile keyboard handling
+handleMobileKeyboard();
 
 // Prevent zoom on double-tap for mobile
 let lastTouchEnd = 0;
