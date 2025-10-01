@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, orientation=landscape">
+    <title>Quantum Puzzler - Navigate the Quantum Dimensions</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="game-container">
+        <!-- Game Header -->
+        <header class="game-header">
+            <h1 class="game-title">QUANTUM PUZZLER</h1>
+            <div class="game-stats">
+                <div class="stat">
+                    <span class="stat-label">LEVEL</span>
+                    <span class="stat-value" id="levelDisplay">01</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">MOVES</span>
+                    <span class="stat-value" id="movesDisplay">000</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">DIMENSION</span>
+                    <span class="stat-value dimension-indicator" id="dimensionDisplay">ALPHA</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Game Layout -->
+        <div class="game-layout">
+            <!-- Game Canvas -->
+            <div class="game-viewport">
+                <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+                <!-- Game UI Overlay -->
+                <div class="game-ui">
+                    <!-- Mobile Info Button -->
+                    <button class="info-toggle mobile-only" id="infoToggle">ℹ️</button>
+
+                    <!-- Desktop Controls Hint -->
+                    <div class="controls-hint desktop-only">
+                        <div class="control-item">
+                            <span class="key">↑↓←→</span>
+                            <span class="action">MOVE</span>
+                        </div>
+                        <div class="control-item">
+                            <span class="key">SPACE</span>
+                            <span class="action">SHIFT DIMENSION</span>
+                        </div>
+                        <div class="control-item">
+                            <span class="key">Q</span>
+                            <span class="action">SUPERPOSITION</span>
+                        </div>
+                        <div class="control-item">
+                            <span class="key">Z</span>
+                            <span class="action">UNDO</span>
+                        </div>
+                        <div class="control-item">
+                            <span class="key">R</span>
+                            <span class="action">RESET</span>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Touch Controls -->
+                    <div class="mobile-controls mobile-only">
+                        <!-- Movement D-Pad - Horizontal Layout -->
+                        <div class="dpad-container">
+                            <button class="dpad-btn" data-action="left">←</button>
+                            <button class="dpad-btn" data-action="up">↑</button>
+                            <button class="dpad-btn" data-action="down">↓</button>
+                            <button class="dpad-btn" data-action="right">→</button>
+                        </div>
+
+                        <!-- Game Instructions -->
+                        <div class="mobile-instructions">
+                            <div class="instruction-item">
+                                <span class="instruction-icon">↑↓←→</span>
+                                <span class="instruction-text">MOVE</span>
+                            </div>
+                            <div class="instruction-item">
+                                <span class="instruction-icon">👆👆</span>
+                                <span class="instruction-text">DOUBLE TAP TO SHIFT</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Level Complete Modal -->
+                    <div class="modal" id="levelCompleteModal" tabindex="-1">
+                        <div class="modal-content">
+                            <h2>LEVEL COMPLETE</h2>
+                            <div class="level-stats">
+                                <p>MOVES: <span id="finalMoves">0</span></p>
+                                <p>DIMENSION SHIFTS: <span id="finalShifts">0</span></p>
+                            </div>
+                            <div class="modal-controls">
+                                <p class="control-hint"><span class="key">ENTER</span> Next Level | <span class="key">R</span> Retry | <span class="key">ESC</span> Close</p>
+                            </div>
+                            <button class="btn-primary" id="nextLevelBtn">NEXT LEVEL</button>
+                            <button class="btn-secondary" id="retryLevelBtn">RETRY</button>
+                        </div>
+                    </div>
+
+                    <!-- Game Complete Modal -->
+                    <div class="modal" id="gameCompleteModal" tabindex="-1">
+                        <div class="modal-content">
+                            <h2>QUANTUM MASTERY ACHIEVED</h2>
+                            <p>You have successfully navigated all quantum dimensions!</p>
+                            <div class="final-stats">
+                                <p>TOTAL MOVES: <span id="totalMoves">0</span></p>
+                                <p>TOTAL SHIFTS: <span id="totalShifts">0</span></p>
+                                <p>LEVELS COMPLETED: <span id="levelsCompleted">15</span></p>
+                            </div>
+                            <div class="modal-controls">
+                                <p class="control-hint"><span class="key">ENTER</span> or <span class="key">ESC</span> Play Again</p>
+                            </div>
+                            <button class="btn-primary" id="playAgainBtn">PLAY AGAIN</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Info Panel -->
+            <div class="mobile-info-panel mobile-only" id="mobileInfoPanel">
+                <div class="info-content">
+                    <h3>QUANTUM PUZZLER</h3>
+                    <p>Navigate quantum dimensions to reach the goal. Use dimension shifting and superposition to solve puzzles.</p>
+
+                    <h4>ELEMENTS</h4>
+                    <div class="element-list">
+                        <div>🔷 Platforms (cyan/magenta)</div>
+                        <div>🎯 Goal (reach to complete)</div>
+                        <div>🟡 Portals (teleport)</div>
+                        <div>🔴🟢 Gates (red blocked, green open)</div>
+                        <div>🟠 Switches (toggle gates)</div>
+                    </div>
+
+                    <h4>CONTROLS</h4>
+                    <div class="controls-list">
+                        <div>D-Pad: Move</div>
+                        <div>SHIFT: Change dimension</div>
+                        <div>SUPER: See both dimensions</div>
+                        <div>UNDO: Reverse last move</div>
+                        <div>RESET: Restart level</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instructions Sidebar (Desktop) -->
+            <aside class="instructions-sidebar desktop-only">
+                <div class="sidebar-content">
+                    <h3>QUANTUM NAVIGATION PROTOCOL</h3>
+                    <p>Navigate through quantum dimensions as a wireframe avatar to reach the goal. Each dimension contains different platforms, obstacles, and mechanics. Master quantum physics principles to solve increasingly complex puzzles across 15 challenging levels.</p>
+
+                    <h3>GAME ELEMENTS</h3>
+                    <div class="element-grid">
+                        <div class="element-item">
+                            <span class="element-icon">🔷</span>
+                            <div class="element-desc">
+                                <strong>Platforms</strong><br>
+                                Cyan/Magenta wireframe squares you can walk on
+                            </div>
+                        </div>
+                        <div class="element-item">
+                            <span class="element-icon">🎯</span>
+                            <div class="element-desc">
+                                <strong>Goal</strong><br>
+                                Pulsing circles - reach to complete level
+                            </div>
+                        </div>
+                        <div class="element-item">
+                            <span class="element-icon">🟡</span>
+                            <div class="element-desc">
+                                <strong>Portals</strong><br>
+                                Yellow circles that teleport you instantly
+                            </div>
+                        </div>
+                        <div class="element-item">
+                            <span class="element-icon">🔴🟢</span>
+                            <div class="element-desc">
+                                <strong>Gates</strong><br>
+                                Red (blocked) or Green (open) - controlled by switches
+                            </div>
+                        </div>
+                        <div class="element-item">
+                            <span class="element-icon">🟠</span>
+                            <div class="element-desc">
+                                <strong>Switches</strong><br>
+                                Orange circles that toggle gates
+                            </div>
+                        </div>
+                        <div class="element-item">
+                            <span class="element-icon">🔒</span>
+                            <div class="element-desc">
+                                <strong>Quantum Locks</strong><br>
+                                Require specific dimension-shift sequences
+                            </div>
+                        </div>
+                        <div class="element-item">
+                            <span class="element-icon">📐</span>
+                            <div class="element-desc">
+                                <strong>Phase Shifters</strong><br>
+                                Only accessible in matching dimension
+                            </div>
+                        </div>
+                        <div class="element-item">
+                            <span class="element-icon">🪞</span>
+                            <div class="element-desc">
+                                <strong>Mirrors</strong><br>
+                                Reflect you to opposite dimension at mirrored position
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>QUANTUM MECHANICS</h3>
+                    <div class="mechanics-list">
+                        <div class="mechanic-item">
+                            <strong>Dimension Shifting:</strong> Toggle between Alpha (cyan) and Beta (magenta) dimensions - each has different layouts
+                        </div>
+                        <div class="mechanic-item">
+                            <strong>Superposition:</strong> Temporarily exist in both dimensions simultaneously - see ghost player
+                        </div>
+                        <div class="mechanic-item">
+                            <strong>Entanglement:</strong> Actions in one dimension affect both (switches, locks)
+                        </div>
+                        <div class="mechanic-item">
+                            <strong>Decoherence:</strong> Shifting to invalid position resets you to start
+                        </div>
+                    </div>
+
+                    <h3>CONTROLS</h3>
+                    <div class="controls-grid">
+                        <div class="control-row">
+                            <span class="control-key">↑↓←→ / WASD</span>
+                            <span class="control-action">Movement</span>
+                        </div>
+                        <div class="control-row">
+                            <span class="control-key">SPACE</span>
+                            <span class="control-action">Dimension Shift</span>
+                        </div>
+                        <div class="control-row">
+                            <span class="control-key">Q</span>
+                            <span class="control-action">Superposition (3-sec timer)</span>
+                        </div>
+                        <div class="control-row">
+                            <span class="control-key">Z / U</span>
+                            <span class="control-action">Undo Move (up to 3)</span>
+                        </div>
+                        <div class="control-row">
+                            <span class="control-key">R</span>
+                            <span class="control-action">Reset Level</span>
+                        </div>
+                        <div class="control-row">
+                            <span class="control-key">H / ?</span>
+                            <span class="control-action">Help/State Description</span>
+                        </div>
+                        <div class="control-row">
+                            <span class="control-key">1-4</span>
+                            <span class="control-action">Difficulty Modes</span>
+                        </div>
+                        <div class="control-row">
+                            <span class="control-key">ENTER</span>
+                            <span class="control-action">Next Level (when complete)</span>
+                        </div>
+                        <div class="control-row">
+                            <span class="control-key">ESC</span>
+                            <span class="control-action">Close Modal</span>
+                        </div>
+                    </div>
+
+                    <h3>TOUCH CONTROLS</h3>
+                    <div class="touch-controls">
+                        <div class="touch-item">
+                            <strong>Swipe:</strong> Move in swiped direction
+                        </div>
+                        <div class="touch-item">
+                            <strong>Double-tap:</strong> Shift dimensions
+                        </div>
+                    </div>
+
+                    <h3>DIFFICULTY MODES</h3>
+                    <div class="difficulty-grid">
+                        <div class="difficulty-item casual">
+                            <span class="diff-number">1</span>
+                            <div class="diff-info">
+                                <strong>Casual</strong><br>
+                                10 undos, 5-second superposition
+                            </div>
+                        </div>
+                        <div class="difficulty-item normal">
+                            <span class="diff-number">2</span>
+                            <div class="diff-info">
+                                <strong>Normal</strong><br>
+                                3 undos, 3-second superposition
+                            </div>
+                        </div>
+                        <div class="difficulty-item challenge">
+                            <span class="diff-number">3</span>
+                            <div class="diff-info">
+                                <strong>Challenge</strong><br>
+                                1 undo, 1.5-second superposition
+                            </div>
+                        </div>
+                        <div class="difficulty-item zen">
+                            <span class="diff-number">4</span>
+                            <div class="diff-info">
+                                <strong>Zen</strong><br>
+                                Unlimited undos and time
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>STRATEGY TIPS</h3>
+                    <div class="tips-list">
+                        <div class="tip-item">
+                            <strong>Plan Ahead:</strong> Use superposition (Q) to see both dimensions before moving
+                        </div>
+                        <div class="tip-item">
+                            <strong>Use Undos:</strong> Experiment with Z to try different approaches
+                        </div>
+                        <div class="tip-item">
+                            <strong>Sequence Matters:</strong> Quantum locks require specific dimension patterns
+                        </div>
+                        <div class="tip-item">
+                            <strong>Mirror Logic:</strong> Mirrors reflect position - Alpha position 2 becomes Beta position 8 if mirror is at 5
+                        </div>
+                        <div class="tip-item">
+                            <strong>Phase Timing:</strong> Some platforms only exist in specific dimensions
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

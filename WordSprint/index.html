@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Word Sprint</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Main Container -->
+  <div class="game-container">
+    <h1 class="game-title">Word Sprint</h1>
+
+    <!-- Brief Instructions -->
+    <p class="instructions">
+      Unscramble the letters to form the correct word. 
+      Type your guess and press ENTER before time runs out!
+    </p>
+
+    <!-- Scrambled Letters -->
+    <div id="scrambledLetters" class="letters-container"></div>
+
+    <!-- Answer Input -->
+    <input
+      type="text"
+      id="answerInput"
+      class="answer-input"
+      placeholder="Type your answer..."
+    />
+
+    <!-- Timer Display -->
+    <div id="timer" class="timer"></div>
+    
+    <!-- Score and Streak Display -->
+    <div class="score-container">
+      <span id="score" class="score-label">Score: 0</span>
+      <span id="streak" class="streak-label">Streak: 0</span>
+    </div>
+
+    <!-- Start / Retry Buttons -->
+    <button id="startBtn" class="button">Start Game</button>
+    <button id="retryBtn" class="button hidden">Retry</button>
+
+    <!-- Touch Submit Button for Mobile -->
+    <button id="submitBtn" class="button submit-btn hidden">Submit Answer</button>
+
+    <!-- Sound Toggle Button -->
+    <button id="soundToggle" class="sound-toggle" aria-label="Toggle sound">🔊</button>
+
+    <!-- Correct Word Display -->
+    <div id="correctAnswer" class="correct-word hidden"></div>
+  </div>
+
+  <!-- Footer -->
+  <footer>designed by studio poetics © 2025</footer>
+
+  <!-- Script for the Game Logic -->
+  <script src="script.js"></script>
+</body>
+</html>
