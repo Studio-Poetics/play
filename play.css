@@ -665,7 +665,7 @@ body {
 }
 
 .cta-primary {
-    background: #fa7268;
+    background: #ff6b35;
     color: white;
     border: none;
     padding: 12px 24px;
@@ -695,7 +695,7 @@ body {
 }
 
 .cta-secondary:hover {
-    background: #fa7268;
+    background: #ff6b35;
     color: white;
 }
 
