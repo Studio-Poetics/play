@@ -17,9 +17,9 @@ const scoreDisplay     = document.getElementById("score");
 const streakDisplay    = document.getElementById("streak");
 const startBtn         = document.getElementById("startBtn");
 const retryBtn         = document.getElementById("retryBtn");
-const submitBtn        = document.getElementById("submitBtn");
 const soundToggle      = document.getElementById("soundToggle");
 const correctAnswerDiv = document.getElementById("correctAnswer");
+const keyboardContainer = document.getElementById("keyboard-container");
 
 /* ------------ Word Buckets ------------ */
 let wordsEasy3_4    = [];
@@ -40,6 +40,7 @@ let streak           = 0;
 let isGameActive     = false;
 let solvedWordsCount = 0; // How many words the player solved correctly so far
 let isSoundMuted = false; // Sound toggle state
+let isRoundOver = false;
 
 /* ------------ Sound Effects ------------ */
 function playSound(frequency, duration, type = 'sine') {
@@ -205,6 +206,46 @@ function displayScrambledWord() {
 }
 
 /**
+ * Create the on-screen keyboard
+ */
+function createKeyboard() {
+  const keyboardLayout = [
+    "q w e r t y u i o p",
+    "a s d f g h j k l",
+    "z x c v b n m backspace",
+    "enter"
+  ];
+
+  keyboardContainer.innerHTML = ""; // Clear existing keyboard
+
+  keyboardLayout.forEach(row => {
+    const rowDiv = document.createElement("div");
+    rowDiv.className = "keyboard-row";
+    const keys = row.split(" ");
+
+    keys.forEach(key => {
+      const keyBtn = document.createElement("button");
+      keyBtn.className = "key";
+      keyBtn.dataset.key = key;
+
+      if (key === "enter") {
+        keyBtn.classList.add("enter-key");
+        keyBtn.id = "keyboard-enter-btn";
+        keyBtn.textContent = "ENTER";
+      } else if (key === "backspace") {
+        keyBtn.classList.add("backspace-key");
+        keyBtn.innerHTML = "⌫"; // Backspace icon
+      } else {
+        keyBtn.textContent = key;
+      }
+
+      rowDiv.appendChild(keyBtn);
+    });
+    keyboardContainer.appendChild(rowDiv);
+  });
+}
+
+/**
  * Start the game
  */
 function startGame() {
@@ -226,15 +267,16 @@ function startGame() {
   baseTime         = 15;
   timeRemaining    = baseTime;
   isGameActive     = true;
+  isRoundOver      = false;
 
   updateScoreDisplay();
   timerDisplay.textContent = `Time: ${timeRemaining}`;
 
   startBtn.classList.add("hidden");
   retryBtn.classList.add("hidden");
-  submitBtn.classList.remove("hidden");
   correctAnswerDiv.classList.add("hidden");
 
+  createKeyboard();
   playStartSound();
 
   pickNewWord();
@@ -280,6 +322,7 @@ function failRound(reason) {
 
   clearInterval(timer);
   timer = null;
+  isRoundOver = true;
 
   playWrongSound();
 
@@ -296,29 +339,25 @@ function failRound(reason) {
     }
   }
 
-  correctAnswerDiv.textContent = answerText;
-  correctAnswerDiv.classList.remove("hidden");
+  scrambledLetters.textContent = answerText;
 
   streak = 0;
   updateScoreDisplay();
 
-  // After short delay, continue
-  setTimeout(() => {
-    if (isGameActive) {
-      nextRound();
-    }
-  }, 2000);
+  const enterBtn = document.getElementById("keyboard-enter-btn");
+  if(enterBtn) enterBtn.textContent = "Next";
 }
 
 /**
  * Move to the next round (pick new puzzle word, reset time, etc.)
  */
-function nextRound() {
+function nextWord() {
   // Clear any existing timer first to prevent multiple intervals
   if (timer) {
     clearInterval(timer);
     timer = null;
   }
+  isRoundOver = false;
 
   correctAnswerDiv.classList.add("hidden");
   pickNewWord();
@@ -331,7 +370,11 @@ function nextRound() {
   timerDisplay.textContent = `Time: ${timeRemaining}`;
 
   answerInput.value = "";
+  answerInput.classList.remove("correct", "incorrect");
   answerInput.focus();
+
+  const enterBtn = document.getElementById("keyboard-enter-btn");
+  if(enterBtn) enterBtn.textContent = "Enter";
 
   timer = setInterval(countdown, 1000);
 }
@@ -341,14 +384,16 @@ function nextRound() {
  * and is in the dictionary
  */
 function checkAnswer() {
-  if (!isGameActive) return;
+  if (!isGameActive || isRoundOver) return;
 
   const userGuess = answerInput.value.trim().toLowerCase();
 
   if (isValidAnagram(userGuess, currentWord) && dictionarySet.has(userGuess)) {
     // Correct guess
+    answerInput.classList.add("correct");
     clearInterval(timer);
     timer = null;
+    isRoundOver = true;
 
     playCorrectSound();
 
@@ -365,26 +410,22 @@ function checkAnswer() {
     const allAnagrams = findAllValidAnagrams(currentWord);
     const otherAnagrams = allAnagrams.filter(word => word !== userGuess);
 
+    let successText = "Correct!";
     if (otherAnagrams.length > 0) {
       const limitedAnagrams = otherAnagrams.slice(0, 3);
-      let successText = `Correct! Other valid words: ${limitedAnagrams.join(", ")}`;
+      successText = `Correct! Other valid words: ${limitedAnagrams.join(", ")}`;
       if (otherAnagrams.length > 3) {
         successText += ` (+${otherAnagrams.length - 3} more)`;
       }
-      correctAnswerDiv.textContent = successText;
-      correctAnswerDiv.classList.remove("hidden");
-
-      // Hide the message and move to next round after a brief delay
-      setTimeout(() => {
-        correctAnswerDiv.classList.add("hidden");
-        nextRound();
-      }, 1500);
-    } else {
-      // No alternatives found, proceed immediately
-      nextRound();
     }
+    scrambledLetters.textContent = successText;
+    
+    const enterBtn = document.getElementById("keyboard-enter-btn");
+    if(enterBtn) enterBtn.textContent = "Next";
+
   } else {
     // Incorrect => show correct, then next
+    answerInput.classList.add("incorrect");
     failRound("Incorrect guess");
   }
 }
@@ -438,21 +479,43 @@ function endGame() {
   timer = null;
   scrambledLetters.textContent = "Game Over!";
   retryBtn.classList.remove("hidden");
-  submitBtn.classList.add("hidden");
   correctAnswerDiv.classList.add("hidden");
+  keyboardContainer.innerHTML = "";
 }
 
 /* ------------ Event Listeners ------------ */
 startBtn.addEventListener("click", startGame);
 retryBtn.addEventListener("click", startGame);
-submitBtn.addEventListener("click", checkAnswer);
 soundToggle.addEventListener("click", toggleSound);
+
+keyboardContainer.addEventListener("click", (e) => {
+  if (!e.target.matches(".key")) return;
+
+  const key = e.target.dataset.key;
+
+  if (key === "enter") {
+    if (isRoundOver) {
+      nextWord();
+    } else {
+      checkAnswer();
+    }
+  } else if (key === "backspace") {
+    answerInput.value = answerInput.value.slice(0, -1);
+  } else {
+    answerInput.value += key;
+  }
+});
+
 
 // Check guess on Enter (multiple event types for better mobile support)
 answerInput.addEventListener("keyup", function (e) {
   if (e.key === "Enter") {
     e.preventDefault();
-    checkAnswer();
+    if (isRoundOver) {
+      nextWord();
+    } else {
+      checkAnswer();
+    }
   }
 });
 
@@ -467,7 +530,11 @@ answerInput.addEventListener("keydown", function (e) {
 const answerForm = document.getElementById("answerForm");
 answerForm.addEventListener("submit", function (e) {
   e.preventDefault();
-  checkAnswer();
+  if (isRoundOver) {
+    nextWord();
+  } else {
+    checkAnswer();
+  }
 });
 
 // Touch and mobile support
@@ -518,9 +585,9 @@ function handleMobileKeyboard() {
     // Mobile keyboard scroll handling
     answerInput.addEventListener('focus', function() {
       setTimeout(() => {
-        const submitBtn = document.getElementById('submitBtn');
-        if (submitBtn && !submitBtn.classList.contains('hidden')) {
-          submitBtn.scrollIntoView({
+        const keyboard = document.getElementById('keyboard-container');
+        if (keyboard) {
+          keyboard.scrollIntoView({
             behavior: 'smooth',
             block: 'nearest',
             inline: 'nearest'
