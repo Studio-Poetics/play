@@ -1,0 +1,74 @@
+<html lang="ta">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>சொல் விளையாட்டு</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Instructions Modal -->
+  <div id="instructionsModal" class="modal">
+    <div class="modal-content">
+      <h2>சொல் விளையாட்டு</h2>
+      <p>எழுத்துகளை தட்டி சரியான சொல்லை உருவாக்குங்கள்.</p>
+      <p>சில சொற்களில் இடைவெளியும் ஒரு எழுத்தாக உள்ளது.</p>
+      <p>ஒவ்வொரு சொல்லுக்கும் உங்களுக்கு 15 வினாடிகள் உள்ளன.</p>
+      <button id="startGameBtn" class="button">விளையாட்டை தொடங்கு</button>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="game-container">
+    <h1 class="game-title">சொல் விளையாட்டு</h1>
+
+    <!-- Score, Timer and Streak Display -->
+    <div class="stats-container">
+      <span id="score" class="stat-label">மதிப்பெண்: 0</span>
+      <span id="timer" class="stat-label timer">நேரம்: 15</span>
+      <span id="streak" class="stat-label">தொடர்: 0</span>
+    </div>
+
+    <!-- Scrambled Letters (Source for dragging) -->
+    <div id="scrambledLetters" class="letters-container"></div>
+
+    <!-- Drop Zone (Target for building the word) -->
+    <div id="dropZone" class="letters-container drop-zone"></div>
+
+    <!-- Answer Input Form (Hidden) -->
+    <form id="answerForm" class="answer-form hidden">
+      <input
+        type="text"
+        id="answerInput"
+        class="answer-input"
+        placeholder="உங்கள் பதிலை தட்டச்சு செய்யுங்கள்..."
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+        data-lpignore="true"
+        inputmode="text"
+        enterkeyhint="done"
+      />
+    </form>
+
+    <!-- Start / Retry Buttons -->
+    <button id="startBtn" class="button hidden">விளையாட்டை தொடங்கு</button>
+    <button id="retryBtn" class="button hidden">மீண்டும் முயற்சி</button>
+
+    <!-- Touch Submit Button for Mobile -->
+    <button id="submitBtn" class="button submit-btn hidden">பதில் சமர்ப்பிக்கவும்</button>
+    <button id="nextBtn" class="button hidden">அடுத்தது</button>
+
+    <!-- Sound Toggle Button -->
+    <button id="soundToggle" class="sound-toggle" aria-label="Toggle sound">🔊</button>
+
+    <!-- Correct Word Display -->
+    <div id="correctAnswer" class="correct-word hidden"></div>
+  </div>
+
+  <!-- Footer -->
+  <footer>ஸ்டூடியோ பொயட்டிக்ஸ் வடிவமைப்பு © 2025</footer>
+
+  <script src="script_tamil.js"></script>
+</body>
+</html>
