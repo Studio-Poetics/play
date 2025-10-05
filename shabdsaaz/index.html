@@ -2,18 +2,78 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-<title>शब्दसाज़</title>
+
+  <!-- SEO Meta Tags -->
+  <title>शब्दसाज़ - हिंदी शब्द खेल | अनाग्राम पहेली गेम</title>
+  <meta name="description" content="शब्दसाज़ - मजेदार हिंदी शब्द खेल। अक्षरों को व्यवस्थित करके सही शब्द बनाएं। अनाग्राम पहेली गेम खेलें और अपनी हिंदी शब्दावली बढ़ाएं।" />
+  <meta name="keywords" content="हिंदी गेम, शब्द खेल, अनाग्राम, पहेली, हिंदी शब्दावली, ऑनलाइन गेम, भाषा खेल, शब्दसाज़" />
+  <meta name="author" content="Studio Poetics" />
+  <meta name="robots" content="index, follow" />
+  <meta name="language" content="Hindi" />
+
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="शब्दसाज़ - हिंदी शब्द खेल | अनाग्राम पहेली गेम" />
+  <meta property="og:description" content="मजेदार हिंदी शब्द खेल। अक्षरों को व्यवस्थित करके सही शब्द बनाएं और अपनी हिंदी शब्दावली बढ़ाएं।" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="/og-image-hindi.jpg" />
+  <meta property="og:url" content="https://wordgame.example.com/hindi" />
+  <meta property="og:site_name" content="शब्दसाज़" />
+  <meta property="og:locale" content="hi_IN" />
+
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="शब्दसाज़ - हिंदी शब्द खेल" />
+  <meta name="twitter:description" content="मजेदार हिंदी शब्द खेल। अक्षरों को व्यवस्थित करके सही शब्द बनाएं।" />
+  <meta name="twitter:image" content="/twitter-image-hindi.jpg" />
+
+  <!-- Additional Meta Tags -->
+  <meta name="theme-color" content="#e8e8e8" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="शब्दसाज़" />
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://wordgame.example.com/hindi" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-742GKRNTHQ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-742GKRNTHQ');
+  </script>
+
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <!-- Instructions Modal -->
+  <div id="instructionsModal" class="modal">
+    <div class="modal-content">
+      <h2>शब्दसाज़</h2>
+      <p>अक्षरों को टैप करके सही शब्द बनाएं।</p>
+      <p>कुछ शब्दों में स्पेस भी एक अक्षर की तरह है।</p>
+      <p>आपके पास हर शब्द के लिए 15 सेकंड हैं।</p>
+      <button id="startGameBtn" class="button">खेल शुरू करें</button>
+    </div>
+  </div>
+
   <!-- Main Container -->
   <div class="game-container">
     <h1 class="game-title">शब्दसाज़</h1>
 
-    <!-- Brief Instructions -->
-    <p class="instructions">
-      अक्षरों को खींचकर सही शब्द बनाएं।
-    </p>
+    <!-- Score, Timer and Streak Display -->
+    <div class="stats-container">
+      <span id="score" class="stat-label">स्कोर: 0</span>
+      <span id="timer" class="stat-label timer">समय: 15</span>
+      <span id="streak" class="stat-label">क्रम: 0</span>
+    </div>
 
     <!-- Scrambled Letters (Source for dragging) -->
     <div id="scrambledLetters" class="letters-container"></div>
@@ -38,18 +98,8 @@
       />
     </form>
 
-
-    <!-- Timer Display -->
-    <div id="timer" class="timer"></div>
-    
-    <!-- Score and Streak Display -->
-    <div class="score-container">
-      <span id="score" class="score-label">स्कोर: 0</span>
-      <span id="streak" class="streak-label">क्रम: 0</span>
-    </div>
-
     <!-- Start / Retry Buttons -->
-    <button id="startBtn" class="button">खेल शुरू करें</button>
+    <button id="startBtn" class="button hidden">खेल शुरू करें</button>
     <button id="retryBtn" class="button hidden">पुनः प्रयास करें</button>
 
     <!-- Touch Submit Button for Mobile -->
