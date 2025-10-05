@@ -1,0 +1,70 @@
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>शब्दसाज़</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Main Container -->
+  <div class="game-container">
+    <h1 class="game-title">शब्दसाज़</h1>
+
+    <!-- Brief Instructions -->
+    <p class="instructions">
+      अक्षरों को खींचकर सही शब्द बनाएं।
+    </p>
+
+    <!-- Scrambled Letters (Source for dragging) -->
+    <div id="scrambledLetters" class="letters-container"></div>
+
+    <!-- Drop Zone (Target for building the word) -->
+    <div id="dropZone" class="letters-container drop-zone"></div>
+
+    <!-- Answer Input Form (Hidden) -->
+    <form id="answerForm" class="answer-form hidden">
+      <input
+        type="text"
+        id="answerInput"
+        class="answer-input"
+        placeholder="अपना उत्तर टाइप करें..."
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+        data-lpignore="true"
+        inputmode="text"
+        enterkeyhint="done"
+      />
+    </form>
+
+
+    <!-- Timer Display -->
+    <div id="timer" class="timer"></div>
+    
+    <!-- Score and Streak Display -->
+    <div class="score-container">
+      <span id="score" class="score-label">स्कोर: 0</span>
+      <span id="streak" class="streak-label">क्रम: 0</span>
+    </div>
+
+    <!-- Start / Retry Buttons -->
+    <button id="startBtn" class="button">खेल शुरू करें</button>
+    <button id="retryBtn" class="button hidden">पुनः प्रयास करें</button>
+
+    <!-- Touch Submit Button for Mobile -->
+    <button id="submitBtn" class="button submit-btn hidden">उत्तर जमा करें</button>
+    <button id="nextBtn" class="button hidden">अगला</button>
+
+    <!-- Sound Toggle Button -->
+    <button id="soundToggle" class="sound-toggle" aria-label="Toggle sound">🔊</button>
+
+    <!-- Correct Word Display -->
+    <div id="correctAnswer" class="correct-word hidden"></div>
+  </div>
+
+  <!-- Footer -->
+  <footer>स्टूडियो पोएटिक्स द्वारा डिज़ाइन किया गया © 2025</footer>
+
+  <script src="script_hindi.js"></script>
+</body>
