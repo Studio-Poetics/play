@@ -1,11 +1,12 @@
-/* 1. Universal Reset & Braun-inspired Typography */
+/* 1. Universal Reset & Braun-inspired Typography with Tamil Support */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@300;400;500;600;700;800&display=swap');
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: "Noto Sans Tamil", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 /* 2. Neumorphic Body - Braun/TE Inspired */
@@ -23,16 +24,16 @@ body {
   position: relative;
 }
 
-/* 3. Container for the Game Elements - Mobile Friendly Width */
+/* 3. Container for the Game Elements - Broader Desktop Layout */
 /* 3. Neumorphic Game Container */
 .game-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 90%;
-  max-width: 420px;
+  max-width: 520px;
   text-align: center;
-  padding: 3rem 2rem;
+  padding: 3rem 2.5rem;
   background: #e8e8e8;
   border-radius: 24px;
   box-shadow:
@@ -49,7 +50,6 @@ body {
   color: #2c2c2c;
   letter-spacing: -0.02em;
   font-weight: 300;
-  text-transform: lowercase;
   position: relative;
 }
 
@@ -64,19 +64,44 @@ body {
   background: #ff6b35; /* TE Orange accent */
 }
 
-/* 5. Brief Instructions */
-/* 5. Neumorphic Instructions */
-.instructions {
+/* 5. Modal Styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #e8e8e8;
+  padding: 3rem 2.5rem;
+  border-radius: 24px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-shadow:
+    12px 12px 24px rgba(163, 163, 163, 0.4),
+    -12px -12px 24px rgba(255, 255, 255, 0.8);
+}
+
+.modal-content h2 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #2c2c2c;
+  font-weight: 300;
+}
+
+.modal-content p {
   font-size: 1.1rem;
   line-height: 1.6;
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.5rem;
   color: #666;
-  padding: 1.5rem;
-  background: #e8e8e8;
-  border-radius: 16px;
-  box-shadow:
-    inset 6px 6px 12px rgba(163, 163, 163, 0.2),
-    inset -6px -6px 12px rgba(255, 255, 255, 0.7);
   font-weight: 400;
 }
 
@@ -131,8 +156,7 @@ body {
   background: #e8e8e8;
   color: #2c2c2c;
   font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   box-shadow:
     inset 6px 6px 12px rgba(163, 163, 163, 0.3),
     inset -6px -6px 12px rgba(255, 255, 255, 0.8);
@@ -146,31 +170,41 @@ body {
     0 0 0 2px #ff6b35;
 }
 
-/* 8. Timer Display */
-/* 8. TE-style Timer */
-.timer {
+/* 8. Stats Container */
+/* 8. Stats Display Row (Score, Timer, Streak) */
+.stats-container {
   margin-bottom: 2rem;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #2c2c2c;
-  background: #e8e8e8;
-  padding: 1rem 2rem;
-  border-radius: 20px;
-  text-transform: lowercase;
-  position: relative;
-  box-shadow:
-    6px 6px 12px rgba(163, 163, 163, 0.3),
-    -6px -6px 12px rgba(255, 255, 255, 0.8);
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+  width: 100%;
 }
 
-.timer::before {
+.stat-label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #2c2c2c;
+  background: #e8e8e8;
+  padding: 1.2rem 1rem;
+  border-radius: 14px;
+  text-align: center;
+  position: relative;
+  box-shadow:
+    inset 4px 4px 8px rgba(163, 163, 163, 0.2),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.7);
+}
+
+.stat-label.timer {
+  position: relative;
+}
+
+.stat-label.timer::before {
   content: '';
   position: absolute;
-  top: 50%;
-  left: 16px;
-  transform: translateY(-50%);
-  width: 6px;
-  height: 6px;
+  top: 8px;
+  right: 8px;
+  width: 4px;
+  height: 4px;
   background: #ff3366; /* TE Pink indicator */
   border-radius: 50%;
   animation: pulse 1s infinite;
@@ -181,49 +215,22 @@ body {
   50% { opacity: 0.3; }
 }
 
-/* 9. Score Container */
-/* 9. Score Display Grid */
-.score-container {
-  margin-bottom: 2.5rem;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  width: 100%;
-}
-
-.score-label,
-.streak-label {
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: #2c2c2c;
-  background: #e8e8e8;
-  padding: 1.2rem 1rem;
-  border-radius: 16px;
-  text-align: center;
-  text-transform: lowercase;
-  position: relative;
-  box-shadow:
-    inset 4px 4px 8px rgba(163, 163, 163, 0.2),
-    inset -4px -4px 8px rgba(255, 255, 255, 0.7);
-}
-
-.score-label::after,
-.streak-label::after {
+.stat-label::after {
   content: '';
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 8px;
+  right: 8px;
   width: 4px;
   height: 4px;
   border-radius: 50%;
 }
 
-.score-label::after {
-  background: #00ff88; /* TE Green */
+.stat-label:first-child::after {
+  background: #00ff88; /* TE Green for score */
 }
 
-.streak-label::after {
-  background: #ffaa00; /* TE Yellow */
+.stat-label:last-child::after {
+  background: #ffaa00; /* TE Yellow for streak */
 }
 
 /* 10. Buttons */
@@ -238,7 +245,6 @@ body {
   cursor: pointer;
   font-size: 1.1rem;
   font-weight: 600;
-  text-transform: lowercase;
   transition: all 0.2s ease;
   min-width: 140px;
   position: relative;
@@ -326,7 +332,6 @@ body {
   padding: 1.5rem;
   border-radius: 16px;
   font-weight: 500;
-  text-transform: lowercase;
   position: relative;
   box-shadow:
     inset 6px 6px 12px rgba(163, 163, 163, 0.3),
@@ -445,23 +450,15 @@ footer {
   }
 
 
-  .timer {
-    font-size: 1.1rem;
-    padding: 0.8rem 1.5rem;
-    border-radius: 16px;
+  .stats-container {
+    gap: 0.6rem;
     margin-bottom: 1.5rem;
   }
 
-  .score-container {
-    gap: 0.8rem;
-    margin-bottom: 2rem;
-  }
-
-  .score-label,
-  .streak-label {
-    padding: 1rem 0.8rem;
-    border-radius: 12px;
-    font-size: 0.85rem;
+  .stat-label {
+    padding: 0.8rem 0.6rem;
+    border-radius: 10px;
+    font-size: 0.75rem;
   }
 
   .button {
@@ -505,7 +502,7 @@ footer {
     letter-spacing: 1px;
   }
 
-  .score-container {
+  .stats-container {
     grid-template-columns: 1fr;
     gap: 0.6rem;
   }

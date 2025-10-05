@@ -21,6 +21,8 @@ const submitBtn        = document.getElementById("submitBtn");
 const nextBtn          = document.getElementById("nextBtn");
 const soundToggle      = document.getElementById("soundToggle");
 const correctAnswerDiv = document.getElementById("correctAnswer");
+const instructionsModal = document.getElementById("instructionsModal");
+const startGameBtn     = document.getElementById("startGameBtn");
 
 const dropZone = document.getElementById("dropZone");
 
@@ -36,8 +38,8 @@ let dictionarySet = new Set(); // Will store all valid words for membership chec
 /* ------------ Game Variables ------------ */
 let currentWord      = "";
 let timer            = null;
-let timeRemaining    = 15; // Start with 15s
-let baseTime         = 15; // Switches to 10 after 10 correct solutions
+let timeRemaining    = 15; // Always 15s
+let baseTime         = 15; // Always 15 seconds
 let score            = 0;
 let streak           = 0;
 let isGameActive     = false;
@@ -366,9 +368,6 @@ function nextRound() {
   pickNewWord();
   displayScrambledWord();
 
-  if (solvedWordsCount >= 10) {
-    baseTime = 10; // reduce time after 10 correct solves
-  }
   timeRemaining = baseTime;
   timerDisplay.textContent = `समय: ${timeRemaining}`;
 
@@ -400,9 +399,7 @@ function checkAnswer() {
     solvedWordsCount++;
     updateScoreDisplay();
 
-    if (solvedWordsCount >= 10) {
-      baseTime = 10; // reduce base time after 10 correct words
-    }
+    // Keep base time constant at 15 seconds
 
     // Show the correct word and alternative anagrams briefly for educational value
     const allAnagrams = findAllValidAnagrams(currentWord);
@@ -535,8 +532,14 @@ dropZone.addEventListener('dragover', allowDrop);
 dropZone.addEventListener('drop', drop);
 
 /* ------------ Event Listeners ------------ */
+startGameBtn.addEventListener("click", function() {
+  instructionsModal.style.display = "none";
+  startGame();
+});
 startBtn.addEventListener("click", startGame);
-retryBtn.addEventListener("click", startGame);
+retryBtn.addEventListener("click", function() {
+  instructionsModal.style.display = "flex";
+});
 submitBtn.addEventListener("click", checkAnswer);
 nextBtn.addEventListener("click", nextRound);
 soundToggle.addEventListener("click", toggleSound);

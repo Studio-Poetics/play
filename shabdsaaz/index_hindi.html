@@ -1,0 +1,73 @@
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>शब्दसाज़</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Instructions Modal -->
+  <div id="instructionsModal" class="modal">
+    <div class="modal-content">
+      <h2>शब्दसाज़</h2>
+      <p>अक्षरों को टैप करके सही शब्द बनाएं।</p>
+      <p>कुछ शब्दों में स्पेस भी एक अक्षर की तरह है।</p>
+      <p>आपके पास हर शब्द के लिए 15 सेकंड हैं।</p>
+      <button id="startGameBtn" class="button">खेल शुरू करें</button>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="game-container">
+    <h1 class="game-title">शब्दसाज़</h1>
+
+    <!-- Score, Timer and Streak Display -->
+    <div class="stats-container">
+      <span id="score" class="stat-label">स्कोर: 0</span>
+      <span id="timer" class="stat-label timer">समय: 15</span>
+      <span id="streak" class="stat-label">क्रम: 0</span>
+    </div>
+
+    <!-- Scrambled Letters (Source for dragging) -->
+    <div id="scrambledLetters" class="letters-container"></div>
+
+    <!-- Drop Zone (Target for building the word) -->
+    <div id="dropZone" class="letters-container drop-zone"></div>
+
+    <!-- Answer Input Form (Hidden) -->
+    <form id="answerForm" class="answer-form hidden">
+      <input
+        type="text"
+        id="answerInput"
+        class="answer-input"
+        placeholder="अपना उत्तर टाइप करें..."
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+        data-lpignore="true"
+        inputmode="text"
+        enterkeyhint="done"
+      />
+    </form>
+
+    <!-- Start / Retry Buttons -->
+    <button id="startBtn" class="button hidden">खेल शुरू करें</button>
+    <button id="retryBtn" class="button hidden">पुनः प्रयास करें</button>
+
+    <!-- Touch Submit Button for Mobile -->
+    <button id="submitBtn" class="button submit-btn hidden">उत्तर जमा करें</button>
+    <button id="nextBtn" class="button hidden">अगला</button>
+
+    <!-- Sound Toggle Button -->
+    <button id="soundToggle" class="sound-toggle" aria-label="Toggle sound">🔊</button>
+
+    <!-- Correct Word Display -->
+    <div id="correctAnswer" class="correct-word hidden"></div>
+  </div>
+
+  <!-- Footer -->
+  <footer>स्टूडियो पोएटिक्स द्वारा डिज़ाइन किया गया © 2025</footer>
+
+  <script src="script_hindi.js"></script>
+</body>
