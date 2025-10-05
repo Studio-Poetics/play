@@ -229,6 +229,7 @@ function displayScrambledWord() {
     tile.addEventListener('dragstart', (e) => {
       e.dataTransfer.setData('text/plain', e.target.id);
     });
+    tile.addEventListener('click', onTileClick);
     scrambledLetters.appendChild(tile);
   });
 }
@@ -517,6 +518,15 @@ function drop(e) {
   if (tile) {
     e.currentTarget.appendChild(tile);
   }
+}
+
+function onTileClick(e) {
+    const tile = e.currentTarget;
+    if (tile.parentElement === scrambledLetters) {
+        dropZone.appendChild(tile);
+    } else if (tile.parentElement === dropZone) {
+        scrambledLetters.appendChild(tile);
+    }
 }
 
 scrambledLetters.addEventListener('dragover', allowDrop);
